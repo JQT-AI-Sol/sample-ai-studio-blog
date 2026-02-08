@@ -2,63 +2,358 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --color-offwhite: #FAFAF8;
-  --color-ink: #1A1A1A;
-  --color-warm-gray: #6B6560;
-  --color-light-gray: #E8E6E3;
-  --color-medium-gray: #9B9590;
+  /* Colors */
+  --color-cream: #F5F0E8;
+  --color-ink: #1C1917;
+  --color-espresso: #44403C;
+  --color-walnut: #78716C;
+  --color-sand: #D6D3D1;
+  --color-parchment: #E7E5E4;
+  --color-burgundy: #991B1B;
+  --color-gold: #A16207;
+  --color-navy: #1E3A5F;
+  --color-ivory: #FEFCE8;
+
+  /* Fonts */
+  --font-serif-jp: 'Noto Serif JP', 'Yu Mincho', serif;
+  --font-sans-jp: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  --font-display: 'Cormorant Garamond', 'Georgia', serif;
+
+  /* Animations */
+  --animate-fade-slide-up: fadeSlideUp 0.8s ease-out both;
+  --animate-fade-in: fadeIn 0.6s ease-out both;
+  --animate-expand-width: expandWidth 0.8s ease-out both;
+  --animate-slide-in-left: slideInFromLeft 0.6s ease-out both;
 }
+
+/* ============================================
+   Base Styles
+   ============================================ */
 
 body {
-  background: var(--color-offwhite);
+  background: var(--color-cream);
   color: var(--color-ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans-jp);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
 }
 
-.font-editorial {
-  font-family: var(--font-serif);
+/* Paper grain texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
 
-.divider {
+/* Selection */
+::selection {
+  background-color: var(--color-burgundy);
+  color: var(--color-ivory);
+}
+
+/* ============================================
+   Keyframes
+   ============================================ */
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
+
+.animate-reveal {
+  animation: fadeSlideUp 0.8s ease-out both;
+}
+
+.animate-reveal-delay-1 {
+  animation: fadeSlideUp 0.8s ease-out 0.1s both;
+}
+
+.animate-reveal-delay-2 {
+  animation: fadeSlideUp 0.8s ease-out 0.2s both;
+}
+
+.animate-reveal-delay-3 {
+  animation: fadeSlideUp 0.8s ease-out 0.3s both;
+}
+
+.animate-reveal-delay-4 {
+  animation: fadeSlideUp 0.8s ease-out 0.4s both;
+}
+
+.animate-reveal-delay-5 {
+  animation: fadeSlideUp 0.8s ease-out 0.5s both;
+}
+
+/* ============================================
+   Hover Effects
+   ============================================ */
+
+/* Underline grows from left */
+.hover-underline-grow {
+  position: relative;
+  text-decoration: none;
+}
+
+.hover-underline-grow::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: var(--color-burgundy);
+  transition: width 0.4s ease;
+}
+
+.hover-underline-grow:hover::after {
+  width: 100%;
+}
+
+/* Background slides in from left */
+.hover-bg-slide {
+  position: relative;
+  z-index: 0;
+}
+
+.hover-bg-slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-parchment);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  z-index: -1;
+  border-radius: 4px;
+}
+
+.hover-bg-slide:hover::before {
+  transform: scaleX(1);
+}
+
+/* Card lift */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.08);
+}
+
+/* ============================================
+   Masthead
+   ============================================ */
+
+.masthead-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+.masthead-rule {
+  height: 4px;
+  background: linear-gradient(to right, var(--color-ink), var(--color-espresso), var(--color-ink));
   border: none;
-  border-top: 1px solid var(--color-light-gray);
 }
 
-.divider-bold {
+/* ============================================
+   Featured Panel
+   ============================================ */
+
+.featured-panel {
+  background: var(--color-navy);
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(254, 252, 232, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================
+   Dividers
+   ============================================ */
+
+.divider-double {
   border: none;
-  border-top: 2px solid var(--color-ink);
+  border-top: 3px double var(--color-sand);
 }
 
-.transition-editorial {
-  transition: color 0.3s ease, opacity 0.3s ease;
+/* ============================================
+   Drop Cap
+   ============================================ */
+
+.drop-cap > p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-size: 4.5em;
+  font-weight: 700;
+  color: var(--color-burgundy);
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.1em;
+  margin-top: 0.05em;
 }
+
+/* ============================================
+   Prose Customization
+   ============================================ */
 
 .prose :where(h1, h2, h3, h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-family: var(--font-serif);
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif-jp);
+  letter-spacing: 0.02em;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--color-sand);
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  line-height: 1.85;
+  line-height: 2;
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: var(--color-ink);
-  text-decoration-color: var(--color-medium-gray);
+  color: var(--color-burgundy);
+  text-decoration-color: var(--color-burgundy);
   text-underline-offset: 3px;
-  transition: text-decoration-color 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
-  text-decoration-color: var(--color-ink);
+  opacity: 0.7;
 }
 
 .prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-left-color: var(--color-light-gray);
+  border-left: none;
+  border-top: 1px solid var(--color-sand);
+  border-bottom: 1px solid var(--color-sand);
+  padding: 2em 1.5em;
   font-style: normal;
-  color: var(--color-warm-gray);
+  color: var(--color-espresso);
+  position: relative;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *))::before {
+  content: '\201C';
+  font-family: var(--font-display);
+  font-size: 5em;
+  color: var(--color-sand);
+  position: absolute;
+  top: -0.1em;
+  left: 0.05em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.prose :where(ul > li)::marker,
+.prose :where(ol > li)::marker {
+  color: var(--color-walnut);
+}
+
+/* ============================================
+   Back Link
+   ============================================ */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--color-walnut);
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: var(--color-ink);
+}
+
+.back-link .arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.back-link:hover .arrow {
+  transform: translateX(-4px);
+}
+
+/* ============================================
+   Issue Badge
+   ============================================ */
+
+.issue-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-sand);
+  padding: 0.25em 0.75em;
+  color: var(--color-walnut);
+}
+
+/* ============================================
+   Custom Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-walnut);
 }

@@ -12,6 +12,11 @@ type Post = {
   body: any[];
 };
 
+function getVolNo(dateString: string) {
+  const d = new Date(dateString);
+  return { vol: d.getFullYear() - 2025, no: d.getMonth() + 1 };
+}
+
 export async function generateStaticParams() {
   const slugs = await sanityFetch<{ slug: string }[]>({
     query: POST_SLUGS_QUERY,
@@ -34,45 +39,76 @@ export default async function PostPage({
     notFound();
   }
 
+  const volNo = post.publishedAt ? getVolNo(post.publishedAt) : null;
+
   return (
-    <article>
-      <div className="mb-4">
-        <Link
-          href="/"
-          className="text-sm text-medium-gray tracking-wide transition-editorial hover:text-ink"
-        >
-          &larr; Articles
+    <article className="animate-reveal">
+      {/* Back link */}
+      <div className="mb-10">
+        <Link href="/" className="back-link">
+          <span className="arrow">&larr;</span>
+          All Articles
         </Link>
       </div>
 
-      <header className="mb-12">
-        {post.publishedAt && (
-          <time className="block text-xs text-medium-gray tracking-widest uppercase mb-4">
-            {new Date(post.publishedAt).toLocaleDateString("ja-JP", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
-        )}
-        <h1 className="font-editorial text-4xl md:text-5xl font-normal leading-tight tracking-tight text-ink">
+      <header className="mb-14">
+        {/* Date and Vol/No */}
+        <div className="flex items-center gap-4 mb-6">
+          {post.publishedAt && (
+            <time className="text-sm text-gold tracking-[0.15em] uppercase font-medium">
+              {new Date(post.publishedAt).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+          )}
+          {volNo && (
+            <span className="issue-badge">
+              Vol.{volNo.vol} No.{volNo.no}
+            </span>
+          )}
+        </div>
+
+        {/* Title */}
+        <h1 className="font-serif-jp font-black text-4xl md:text-5xl lg:text-7xl leading-[1.15] tracking-tight text-ink">
           {post.title}
         </h1>
-        <hr className="divider mt-10" />
+
+        {/* Decorative line with diamond */}
+        <div className="mt-10 flex items-center gap-4">
+          <div className="flex-1 h-px bg-sand" />
+          <span className="text-sand text-sm">&#9670;</span>
+          <div className="flex-1 h-px bg-sand" />
+        </div>
       </header>
 
-      <div className="prose prose-lg prose-gray max-w-none">
+      {/* Article body with drop cap */}
+      <div className="drop-cap prose prose-lg prose-stone max-w-none" style={{ letterSpacing: '0.04em', lineHeight: 2 }}>
         <PortableText value={post.body} />
       </div>
 
-      <footer className="mt-16">
-        <hr className="divider mb-8" />
-        <Link
-          href="/"
-          className="text-sm text-medium-gray tracking-wide transition-editorial hover:text-ink"
-        >
-          &larr; All Articles
-        </Link>
+      {/* End mark */}
+      <div className="mt-12 text-center">
+        <span className="text-ink text-lg">&#9632;</span>
+      </div>
+
+      {/* Footer navigation */}
+      <footer className="mt-12">
+        <hr className="divider-double mb-8" />
+        <div className="flex items-center justify-between">
+          <Link href="/" className="back-link">
+            <span className="arrow">&larr;</span>
+            All Articles
+          </Link>
+          <a
+            href="#"
+            onClick={undefined}
+            className="text-sm text-walnut tracking-wide transition-colors duration-300 hover:text-ink"
+          >
+            Back to Top &uarr;
+          </a>
+        </div>
       </footer>
     </article>
   );
